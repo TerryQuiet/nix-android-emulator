@@ -42,8 +42,8 @@
         "revision": "36.6.3",
         "revision-details": {
           "major:0": "36",
-          "micro:2": "3",
-          "minor:1": "6"
+          "minor:1": "6",
+          "micro:2": "3"
         },
         "type-details": {
           "element-attributes": {
@@ -63,22 +63,22 @@
           {
             "arch": "x64",
             "os": "macosx",
-            "sha1": "5310ed9687391838cc0d7c5d8f6adcf5ac36ae5d",
-            "size": 486736780,
+            "sha1": "3ad9f81115436aed6b4feb76f8e5d3e356f2f6e0",
+            "size": 449808912,
             "url": "https://dl.google.com/android/repository/emulator-darwin_x64-15081367.zip"
           },
           {
             "arch": "aarch64",
             "os": "macosx",
-            "sha1": "a7e4e8e843b8056df91f7645bd2cf7f49c52d63a",
-            "size": 411906703,
+            "sha1": "0093f579e798c91b589a8d7bc84e1ca7ee528624",
+            "size": 384550690,
             "url": "https://dl.google.com/android/repository/emulator-darwin_aarch64-15081367.zip"
           },
           {
             "arch": "x64",
             "os": "windows",
-            "sha1": "7182013d03fcf5ac58a4216cd3515eba4587c583",
-            "size": 484924442,
+            "sha1": "1d5cc76415b9717cec08694d171ceb526b1dedb7",
+            "size": 418622111,
             "url": "https://dl.google.com/android/repository/emulator-windows_x64-15081367.zip"
           }
         ],
@@ -89,8 +89,8 @@
         "revision": "36.5.10",
         "revision-details": {
           "major:0": "36",
-          "micro:2": "10",
-          "minor:1": "5"
+          "minor:1": "5",
+          "micro:2": "10"
         },
         "type-details": {
           "element-attributes": {
