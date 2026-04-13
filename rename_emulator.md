@@ -7,32 +7,34 @@ The model name shown by `adb devices -l` comes from:
 ro.product.product.model=<new-name>
 ```
 
-Start the emulator with writable system support:
+For this repo, the reliable persistent path is to patch the AVD's `product`
+logical partition offline inside `system-qemu.img`.
+
+Requirements:
+
+- the target emulator must be stopped
+- run inside a dev shell that exposes `ANDROID_SDK_ROOT`
+
+Usage:
 
 ```bash
-nix develop .#android-a32-33
-emulator -writable-system -no-snapshot-load -verbose -show-kernel -gpu host -no-window -avd a33 -port 5554
+nix develop .#android-a32-33b
+./scripts/rename-emulator-model.rb --avd a33b --model a33b
 ```
 
-In another terminal:
+If the AVD does not already have a persistent `system-qemu.img`, the script
+seeds one from the SDK image first. To reset it from the SDK image before
+patching, use:
 
 ```bash
-adb -s emulator-5554 root
-adb -s emulator-5554 remount
-adb -s emulator-5554 reboot
-adb -s emulator-5554 wait-for-device
-adb -s emulator-5554 root
-adb -s emulator-5554 remount
-adb -s emulator-5554 shell 'mount -o remount,rw /product'
-adb -s emulator-5554 shell \
-  'sed -i "s/^ro.product.product.model=.*/ro.product.product.model=a33/" /product/etc/build.prop'
-adb -s emulator-5554 reboot
+./scripts/rename-emulator-model.rb --avd a33b --model a33b --force-seed
 ```
 
-Verify:
+Verify with a normal cold boot:
 
 ```bash
-adb -s emulator-5554 wait-for-device shell \
-  'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done; getprop ro.product.model'
+emulator -no-snapshot-load -verbose -show-kernel -gpu host -no-window -avd a33b -port 5556
+adb -s emulator-5556 wait-for-device shell getprop ro.product.model
+adb -s emulator-5556 wait-for-device shell getprop ro.product.product.model
 adb devices -l
 ```
