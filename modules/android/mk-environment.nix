@@ -1,7 +1,5 @@
 {
-  inputs,
   pkgs,
-  system,
   lib,
   defaultRepoJson,
 }:
@@ -34,7 +32,6 @@ in
       includeSources ? true,
       includeSystemImages ? null,
       systemImageTypes ? [ ],
-      ide ? "android-studio",
       extraPackages ? [ ],
       includeExtras ? [ ],
       repoJson ? defaultRepoJson,
@@ -179,19 +176,6 @@ in
       sdkDir = "${androidSdk}/libexec/android-sdk";
       jdk = pkgs.jetbrains.jdk;
 
-      pkgsScrcpy = import inputs.nixpkgs-scrcpy {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
-      idePackage =
-        if ide == "android-studio" then
-          [ pkgs.androidStudioPackages.stable ]
-        else if ide == "intellij" then
-          [ pkgs.jetbrains.idea ]
-        else
-          [ ];
-
       runtimeSdkLayoutVersion = "3";
       runtimeAndroidSdk =
         if customEmulator == null then
@@ -306,12 +290,11 @@ in
             androidSdk
             platformTools
             pkgs.git-repo
-            pkgsScrcpy.scrcpy
+            pkgs.scrcpy
             androidListImages
             wrappedAndroidTools
           ]
           ++ lib.optional (customEmulator != null) customEmulator
-          ++ idePackage
           ++ extraPackages;
 
         JAVA_HOME = jdk.home;

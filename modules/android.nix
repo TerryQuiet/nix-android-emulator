@@ -1,9 +1,8 @@
-{ inputs, ... }:
+{ ... }:
 {
   perSystem =
     {
       pkgs,
-      system,
       lib,
       config,
       ...
@@ -12,26 +11,58 @@
       repoJson = import ./android/repo-json.nix { inherit pkgs lib; };
       environmentBuilder = import ./android/mk-environment.nix {
         inherit
-          inputs
           pkgs
-          system
           lib
           ;
         inherit (repoJson) defaultRepoJson;
       };
-      devShells = import ./android/dev-shells.nix {
-        inherit config repoJson;
+      mkAndroidEnvironment = args: environmentBuilder.mkAndroidEnvironment args;
+      mkAndroidShell = args: (mkAndroidEnvironment args).shell;
+      repoJsonInfo = repoJson // {
+        default = repoJson.defaultRepoJson;
       };
     in
     {
+      options.android = {
+        repoJson = lib.mkOption {
+          type = lib.types.attrs;
+          readOnly = true;
+          description = "Merged Android repository metadata and source file paths.";
+        };
+
+        mkEnvironment = lib.mkOption {
+          type = lib.types.functionTo lib.types.anything;
+          readOnly = true;
+          description = "Build a configured Android environment record.";
+        };
+
+        mkShell = lib.mkOption {
+          type = lib.types.functionTo lib.types.package;
+          readOnly = true;
+          description = "Build a configured Android development shell.";
+        };
+      };
+
+      options.mkAndroidEnvironment = lib.mkOption {
+        type = lib.types.functionTo lib.types.anything;
+        readOnly = true;
+        description = "Compatibility alias for android.mkEnvironment.";
+      };
+
       options.mkAndroidShell = lib.mkOption {
         type = lib.types.functionTo lib.types.package;
-        default = args: (environmentBuilder.mkAndroidEnvironment args).shell;
-        description = "Function to create a configured Android dev shell.";
+        readOnly = true;
+        description = "Compatibility alias for android.mkShell.";
       };
 
       config = {
-        inherit devShells;
+        android = {
+          repoJson = repoJsonInfo;
+          mkEnvironment = mkAndroidEnvironment;
+          mkShell = mkAndroidShell;
+        };
+
+        inherit mkAndroidEnvironment mkAndroidShell;
       };
     };
 }
