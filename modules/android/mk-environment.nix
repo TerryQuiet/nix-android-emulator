@@ -37,8 +37,8 @@ in
       repoJson ? defaultRepoJson,
       repoXmls ? null,
       abiVersion ? defaultAbiVersion,
-      androidUserHome ? "$PWD/.android",
-      androidAvdHome ? "$PWD/.android/avd",
+      androidUserHome ? "$HOME/.android",
+      androidAvdHome ? "$HOME/.android/avd",
     }:
     let
       repo = builtins.fromJSON (builtins.readFile repoJson);
@@ -253,6 +253,19 @@ in
         '';
       };
 
+      renameEmulatorModel = pkgs.writeShellApplication {
+        name = "rename-emulator-model";
+        runtimeInputs = [
+          pkgs.ruby
+          pkgs.util-linux
+          pkgs.e2fsprogs
+          pkgs.android-tools
+        ];
+        text = ''
+          exec ruby ${../../scripts/rename-emulator-model.rb} "$@"
+        '';
+      };
+
       localProp = ''
         mkdir -p "$ANDROID_USER_HOME" "$ANDROID_AVD_HOME"
         cat > local.properties <<EOF
@@ -272,6 +285,7 @@ in
         androidListImages
         androidSdk
         platformTools
+        renameEmulatorModel
         resolvedBuildToolsVersions
         missingSourcePlatforms
         resolvedEmulatorVersion
@@ -292,6 +306,7 @@ in
             pkgs.git-repo
             pkgs.scrcpy
             androidListImages
+            renameEmulatorModel
             wrappedAndroidTools
           ]
           ++ lib.optional (customEmulator != null) customEmulator

@@ -19,7 +19,7 @@ Usage:
 
 ```bash
 nix develop .#android-a32-33b
-./scripts/rename-emulator-model.rb --avd a33b --model a33b
+rename-emulator-model --avd a33b --model a33b
 ```
 
 If the AVD does not already have a persistent `system-qemu.img`, the script
@@ -27,7 +27,7 @@ seeds one from the SDK image first. To reset it from the SDK image before
 patching, use:
 
 ```bash
-./scripts/rename-emulator-model.rb --avd a33b --model a33b --force-seed
+rename-emulator-model --avd a33b --model a33b --force-seed
 ```
 
 Verify with a normal cold boot:
